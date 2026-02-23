@@ -1117,8 +1117,3 @@ This project is open source. Please attribute when using.
 - **Author**: [Shalu-Bhatia](https://github.com/Shalu-Bhatia/Audio_Dataset_Validator/)
 
 ---
-
-
----
-
-**Built with ❤️ using Next.js, TypeScript, and Web Audio API**
