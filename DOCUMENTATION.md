@@ -2,9 +2,12 @@
 
 > **Professional-grade audio quality analysis tool for TTS/ASR dataset creators**
 >
+> Author: [Shalu-Bhatia](https://github.com/Shalu-Bhatia/)
 
 ---
 
+
+Try live Demo at: [Audio_Dataset_Validator](https://huggingface.co/spaces/ShaluBhati/Diploma_Project_Audio_Dataset_Validator)
 ## 📑 Table of Contents
 
 1. [Project Overview](#-project-overview)
@@ -41,34 +44,28 @@ The **Audio Dataset Validator** is a Next.js-based web application designed to h
 
 ### High-Level Architecture
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                      Browser (Client)                        │
-│                                                              │
-│  ┌───────────────────────────────────────────────────────┐  │
-│  │           Next.js 14 (React 18) App                   │  │
-│  │  ┌─────────────┐  ┌─────────────┐  ┌──────────────┐  │  │
-│  │  │   UI Layer  │  │   Business  │  │    Audio     │  │  │
-│  │  │ Components  │◄─┤    Logic    │◄─┤  Processing  │  │  │
-│  │  │  (10 TSX)   │  │  (page.tsx) │  │  (Web Audio) │  │  │
-│  │  └─────────────┘  └─────────────┘  └──────────────┘  │  │
-│  │         ▲                ▲                  ▲         │  │
-│  │         │                │                  │         │  │
-│  │         ▼                ▼                  ▼         │  │
-│  │  ┌──────────────────────────────────────────────┐    │  │
-│  │  │       Core Audio Analysis Engine             │    │  │
-│  │  │       (audioAnalyzer.ts)                     │    │  │
-│  │  └──────────────────────────────────────────────┘    │  │
-│  │         ▲                                             │  │
-│  │         │                                             │  │
-│  │         ▼                                             │  │
-│  │  ┌──────────────────────────────────────────────┐    │  │
-│  │  │         Type Definitions (audio.ts)          │    │  │
-│  │  └──────────────────────────────────────────────┘    │  │
-│  └───────────────────────────────────────────────────────┘  │
-│                                                              │
-│  Files stored in browser memory (File API) + localStorage   │
-└─────────────────────────────────────────────────────────────┘
+```mermaid
+graph TD
+    subgraph Browser ["Browser (Client)"]
+        subgraph App ["Next.js 14 (React 18) App"]
+            direction TB
+            
+            subgraph Top [" "]
+                direction LR
+                Audio["Audio Processing (Web Audio)"] --> Logic["Business Logic (page.tsx)"]
+                Logic --> UI["UI Layer Components (10 TSX)"]
+            end
+
+            Engine["Core Audio Analysis Engine (audioAnalyzer.ts)"]
+            Types["Type Definitions (audio.ts)"]
+
+            Top <--> Engine
+            Engine <--> Types
+        end
+
+        Storage[("Browser Memory (File API) + localStorage")]
+        App <--> Storage
+    end
 ```
 
 ### Technology Layers
@@ -88,8 +85,17 @@ The **Audio Dataset Validator** is a Next.js-based web application designed to h
 ## 📁 Project Structure
 
 ```
-Audio_Dataset_Validator/
+polar-interstellar-docker/
 │
+├── .agent/                     # Agent workflows
+│   └── workflows/
+│       └── huggingface-spaces-docker.md
+│
+├── .git/                       # Git repository
+├── .next/                      # Next.js build output (auto-generated)
+├── node_modules/               # Dependencies (auto-generated)
+├── public/                     # Static assets
+│   └── file.svg
 │
 ├── src/                        # Source code
 │   ├── app/                    # Next.js App Router
@@ -325,173 +331,52 @@ page.tsx (Main Application)
 ## 🔄 Data Flow & Connections
 
 ### File Upload to Analysis Flow
-
-```
-User Action: Drag & Drop Files
-         │
-         ▼
-┌─────────────────────┐
-│  AudioDropzone.tsx  │  Validates file types
-└─────────────────────┘
-         │
-         │ onFilesAdded(files)
-         ▼
-┌─────────────────────┐
-│     page.tsx        │  Creates AudioFile objects
-│  handleFilesAdded() │  Sets status = 'pending'
-└─────────────────────┘
-         │
-         │ For each file
-         ▼
-┌─────────────────────────────────┐
-│  audioAnalyzer.ts               │
-│  analyzeAudio(file, settings)   │
-│                                 │
-│  1. Decode audio via Web Audio  │
-│  2. Extract AudioBuffer         │
-│  3. Calculate metrics:          │
-│     - Peak amplitude            │
-│     - RMS level                 │
-│     - Silence regions           │
-│     - DC offset                 │
-│     - Clipping detection        │
-│  4. Detect issues               │
-│  5. Calculate health score      │
-└─────────────────────────────────┘
-         │
-         │ Returns AnalysisResult
-         ▼
-┌─────────────────────┐
-│     page.tsx        │  Updates file.analysis
-│                     │  Sets status = 'done'
-└─────────────────────┘
-         │
-         │ State update triggers re-render
-         ▼
-┌─────────────────────┐     ┌─────────────────────┐
-│    FileList.tsx     │────▶│  AnalysisPanel.tsx  │
-│  (shows health)     │     │  (shows details)    │
-└─────────────────────┘     └─────────────────────┘
-         │
-         ▼
-┌─────────────────────┐
-│  SummaryCard.tsx    │  Aggregates all results
-└─────────────────────┘
+```mermaid
+graph TD
+    Start(["User Action: Drag & Drop Files"]) --> Dropzone["AudioDropzone.tsx<br>Validates file types"]
+    Dropzone -- "onFilesAdded(files)" --> PagePending["page.tsx<br>handleFilesAdded()<br>Creates AudioFile objects<br>Sets status = pending"]
+    PagePending -- "For each file" --> Analyzer["audioAnalyzer.ts<br>analyzeAudio(file, settings)<br>1. Decode audio via Web Audio<br>2. Extract AudioBuffer<br>3. Calculate metrics<br>4. Detect issues<br>5. Calculate health score"]
+    Analyzer -- "Returns AnalysisResult" --> PageDone["page.tsx<br>Updates file.analysis<br>Sets status = done"]
+    PageDone -- "State update triggers re-render" --> FileList["FileList.tsx<br>Shows health score"]
+    FileList --> AnalysisPanel["AnalysisPanel.tsx<br>Shows details"]
+    FileList --> SummaryCard["SummaryCard.tsx<br>Aggregates all results"]
 ```
 
 ### Audio Playback Flow
-
-```
-User Action: Click Play on File
-         │
-         ▼
-┌─────────────────────┐
-│   FileList.tsx      │  onPlay(file)
-└─────────────────────┘
-         │
-         ▼
-┌─────────────────────────────┐
-│       page.tsx              │
-│   loadAudioBuffer()         │
-│                             │
-│  1. Fetch file              │
-│  2. arrayBuffer()           │
-│  3. decodeAudioData()       │
-│  4. Store in audioBuffer    │
-└─────────────────────────────┘
-         │
-         ▼
-┌─────────────────────────────┐
-│   WaveformViewer.tsx        │
-│                             │
-│  1. useEffect detects       │
-│     audioBuffer change      │
-│  2. Renders waveform        │
-│  3. Shows playback cursor   │
-└─────────────────────────────┘
-         │
-         │ User clicks Play
-         ▼
-┌─────────────────────────────┐
-│       page.tsx              │
-│     playPause()             │
-│                             │
-│  Web Audio API:             │
-│  - Create AudioContext      │
-│  - Create BufferSourceNode  │
-│  - Connect to destination   │
-│  - source.start()           │
-│                             │
-│  Update currentTime         │
-│  via requestAnimationFrame  │
-└─────────────────────────────┘
-         │
-         │ Time updates
-         ▼
-┌─────────────────────────────┐
-│   WaveformViewer.tsx        │  Cursor position updates
-└─────────────────────────────┘
+```mermaid
+graph TD
+    Start(["User Action: Click Play on File"]) --> FileList["FileList.tsx<br>onPlay(file)"]
+    FileList -- "onPlay" --> PageLoad["page.tsx<br>loadAudioBuffer()<br>1. Fetch file<br>2. arrayBuffer()<br>3. decodeAudioData()<br>4. Store in audioBuffer"]
+    PageLoad -- "State updates" --> Waveform["WaveformViewer.tsx<br>1. Detects audioBuffer change<br>2. Renders waveform<br>3. Shows playback cursor"]
+    Waveform -- "User clicks Play" --> PagePlay["page.tsx<br>playPause()<br>Web Audio API:<br>Create AudioContext<br>Create BufferSourceNode<br>Connect to destination<br>source.start()"]
+    PagePlay -- "currentTime updates via requestAnimationFrame" --> WaveformUpdate["WaveformViewer.tsx<br>Cursor position updates"]
 ```
 
 ### Audio Processing Flow
-
-```
-User Action: Click "AI Auto-Clean" or Manual Process
-         │
-         ▼
-┌────────────────────────────────────┐
-│     AudioProcessor.tsx             │
-│                                    │
-│  handleAutoClean() or              │
-│  handleManualProcess()             │
-│                                    │
-│  1. Create OfflineAudioContext     │
-│  2. Apply processing chain:        │
-│     ┌─────────────────────┐        │
-│     │  DC Offset Removal  │        │
-│     └─────────────────────┘        │
-│              │                     │
-│              ▼                     │
-│     ┌─────────────────────┐        │
-│     │   Noise Gate        │        │
-│     └─────────────────────┘        │
-│              │                     │
-│              ▼                     │
-│     ┌─────────────────────┐        │
-│     │  Trim Silence       │        │
-│     └─────────────────────┘        │
-│              │                     │
-│              ▼                     │
-│     ┌─────────────────────┐        │
-│     │   Normalize         │        │
-│     └─────────────────────┘        │
-│              │                     │
-│              ▼                     │
-│     ┌─────────────────────┐        │
-│     │ Convert to Mono     │        │
-│     │  (if stereo)        │        │
-│     └─────────────────────┘        │
-│              │                     │
-│              ▼                     │
-│     ┌─────────────────────┐        │
-│     │ Resample to 22kHz   │        │
-│     │   (if needed)       │        │
-│     └─────────────────────┘        │
-│                                    │
-│  3. Render processed audio         │
-│  4. Store in processedBuffer       │
-└────────────────────────────────────┘
-         │
-         ▼
-┌────────────────────────────────────┐
-│     AudioProcessor.tsx             │
-│   handleDownload()                 │
-│                                    │
-│  1. Convert buffer to WAV          │
-│  2. Create Blob                    │
-│  3. Create download link           │
-│  4. Trigger download               │
-└────────────────────────────────────┘
+```mermaid
+graph TD
+    Start([User Action: Click 'AI Auto-Clean' or Manual Process]) --> Processor["AudioProcessor.tsx<br/>handleAutoClean() / handleManualProcess()"]
+    
+    Processor --> Step1[1. Create OfflineAudioContext]
+    
+    subgraph Chain [2. Apply processing chain]
+        DC[DC Offset Removal] --> Gate[Noise Gate]
+        Gate --> Trim[Trim Silence]
+        Trim --> Norm[Normalize]
+        Norm --> Mono[Convert to Mono if stereo]
+        Mono --> Resample[Resample to 22kHz if needed]
+    end
+    
+    Step1 --> Chain
+    Chain --> Step3[3. Render processed audio]
+    Step3 --> Step4[4. Store in processedBuffer]
+    
+    Step4 --> Download["AudioProcessor.tsx<br/>handleDownload()"]
+    
+    Download --> D1[1. Convert buffer to WAV]
+    D1 --> D2[2. Create Blob]
+    D2 --> D3[3. Create download link]
+    D3 --> D4([4. Trigger download])
 ```
 
 ### Type System Connections
@@ -1250,11 +1135,13 @@ This project is open source. Please attribute when using.
 
 ## 📧 Support
 
-- **Issues**: [GitHub Issues](https://github.com/YOUR_USERNAME/audio-dataset-validator/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/YOUR_USERNAME/audio-dataset-validator/discussions)
-- **Author**: [](https://github.com//)
+- **Issues**: [GitHub Issues](https://github.com/Shalu-Bhatia/Audio_Dataset_Validator/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/Shalu-Bhatia/Audio_Dataset_Validator/discussions)
+- **Author**: [Shalu-Bhatia](https://github.com/Shalu-Bhatia/Audio_Dataset_Validator/)
 
 ---
 
+
+---
 
 **Built with ❤️ using Next.js, TypeScript, and Web Audio API**
