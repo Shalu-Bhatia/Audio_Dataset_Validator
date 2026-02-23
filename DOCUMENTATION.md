@@ -85,17 +85,8 @@ graph TD
 ## 📁 Project Structure
 
 ```
-polar-interstellar-docker/
+Audio_Dataset_Validator/
 │
-├── .agent/                     # Agent workflows
-│   └── workflows/
-│       └── huggingface-spaces-docker.md
-│
-├── .git/                       # Git repository
-├── .next/                      # Next.js build output (auto-generated)
-├── node_modules/               # Dependencies (auto-generated)
-├── public/                     # Static assets
-│   └── file.svg
 │
 ├── src/                        # Source code
 │   ├── app/                    # Next.js App Router
