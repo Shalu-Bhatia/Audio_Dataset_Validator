@@ -1,14 +1,3 @@
----
-title: Audio Dataset Validator
-emoji: 🎚️
-colorFrom: indigo
-colorTo: purple
-sdk: docker
-app_file: Dockerfile
-app_port: 7860
-pinned: false
----
-
 # 🎚️ Audio Dataset Validator
 
 > A professional-grade audio quality analysis & cleaning tool for **TTS** and **ASR** dataset creators.
