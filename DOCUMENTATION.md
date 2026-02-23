@@ -2,7 +2,6 @@
 
 > **Professional-grade audio quality analysis tool for TTS/ASR dataset creators**
 >
-> Author: [HAQ-NAWAZ-MALIK](https://github.com/HAQ-NAWAZ-MALIK/)
 
 ---
 
@@ -89,17 +88,8 @@ The **Audio Dataset Validator** is a Next.js-based web application designed to h
 ## 📁 Project Structure
 
 ```
-polar-interstellar-docker/
+Audio_Dataset_Validator/
 │
-├── .agent/                     # Agent workflows
-│   └── workflows/
-│       └── huggingface-spaces-docker.md
-│
-├── .git/                       # Git repository
-├── .next/                      # Next.js build output (auto-generated)
-├── node_modules/               # Dependencies (auto-generated)
-├── public/                     # Static assets
-│   └── file.svg
 │
 ├── src/                        # Source code
 │   ├── app/                    # Next.js App Router
@@ -1262,11 +1252,9 @@ This project is open source. Please attribute when using.
 
 - **Issues**: [GitHub Issues](https://github.com/YOUR_USERNAME/audio-dataset-validator/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/YOUR_USERNAME/audio-dataset-validator/discussions)
-- **Author**: [HAQ-NAWAZ-MALIK](https://github.com/HAQ-NAWAZ-MALIK/)
+- **Author**: [](https://github.com//)
 
 ---
 
-
----
 
 **Built with ❤️ using Next.js, TypeScript, and Web Audio API**
