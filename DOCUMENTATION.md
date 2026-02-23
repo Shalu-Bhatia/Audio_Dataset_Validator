@@ -572,7 +572,7 @@ Rating:
 
 ```bash
 # Clone the repository
-git clone https://github.com/YOUR_USERNAME/audio-dataset-validator.git
+git clone https://github.com/Shalu-Bhatia/Audio_Dataset_Validator/.git
 cd audio-dataset-validator
 
 # Install dependencies
@@ -823,20 +823,6 @@ PORT=3000
 NODE_ENV=production
 ```
 
-### Deployment Checklist
-
-- [ ] Update `README.md` with correct URLs
-- [ ] Test Dockerfile builds successfully
-- [ ] Verify audio playback works in production
-- [ ] Check HTTPS configuration (required for Web Audio API)
-- [ ] Test file upload with large files
-- [ ] Verify export/download functionality
-- [ ] Monitor memory usage (audio processing is memory-intensive)
-- [ ] Set up error logging (Sentry, LogRocket, etc.)
-- [ ] Configure CDN for static assets (optional)
-- [ ] Add analytics (Google Analytics, Plausible, etc.)
-
----
 
 ## 📡 API Reference
 
